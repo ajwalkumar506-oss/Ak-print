@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ID Card Scanner & A4 Print Layout</title>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--ink:#182235;--muted:#667085;--blue:#2457d6;--line:#dce3ef}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink)}
+header{background:#142b52;color:#fff;padding:18px 16px}header h1{font-size:21px;margin:0 0 4px}header p{margin:0;color:#d7e4ff;font-size:13px}
+main{max-width:1100px;margin:16px auto;padding:0 12px;display:grid;grid-template-columns:minmax(280px,390px) 1fr;gap:14px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px;box-shadow:0 3px 14px #1a31520b}
+h2{font-size:16px;margin:0 0 12px}.field{margin:12px 0}.field label{display:block;font-weight:650;margin-bottom:6px}.muted{font-size:12px;color:var(--muted)}
+input[type=file],select,input[type=number]{width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;background:#fff}
+button{border:0;border-radius:9px;padding:10px 12px;background:var(--blue);color:white;font-weight:650;cursor:pointer}button.secondary{background:#e9efff;color:#1c459f}button.light{background:#edf0f5;color:#293548}button.danger{background:#b42318}button:disabled{opacity:.45;cursor:not-allowed}.buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.preview{width:100%;min-height:140px;border:1px dashed #c5cede;border-radius:10px;background:#f8faff;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#758096}.preview img{display:block;max-width:100%;max-height:260px;object-fit:contain}
+.sidegrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sidebox{border:1px solid var(--line);padding:10px;border-radius:11px;min-width:0}.sidebox h3{font-size:14px;margin:0 0 8px}
+.range-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.range-row input{width:100%}
+.paper-wrap{background:#e8edf5;border-radius:12px;padding:12px;overflow:auto}.paper{width:min(100%,510px);aspect-ratio:210/297;background:white;margin:auto;box-shadow:0 2px 12px #10294c20;position:relative;overflow:hidden}.paper-inner{position:absolute;inset:5%;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:min-content;gap:5mm;align-content:start}.card{width:85.6mm;max-width:100%;aspect-ratio:85.6/54;border:1px solid #aab2bf;overflow:hidden;background:#f7f7f7;display:flex;align-items:center;justify-content:center;position:relative}.card img{width:100%;height:100%;object-fit:fill}.card .empty{font-size:11px;color:#8b95a5;text-align:center;padding:5px}.status{font-size:12px;color:var(--muted);margin-top:8px}.notice{background:#fff8e6;border:1px solid #f3d38a;border-radius:10px;padding:10px;font-size:12px;color:#6d4d00;margin-top:12px}
+@media(max-width:760px){main{grid-template-columns:1fr}.paper{width:min(100%,420px)}.paper-inner{inset:4%;gap:3mm}.card{width:100%;aspect-ratio:85.6/54}}
+@media print{body{background:white}header,.left,.toolbar,.status,.notice{display:none!important}main{display:block;margin:0;padding:0}.panel{border:0;box-shadow:none;padding:0}.paper-wrap{padding:0;background:white}.paper{width:210mm;height:297mm;max-width:none;aspect-ratio:auto;box-shadow:none}.paper-inner{inset:10mm;gap:5mm}.card{width:85.6mm;height:54mm;max-width:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<header><h1>SMART ID CARD SCANNER</h1><p>Front / Back upload · Crop & enhance · A4 actual-size print</p></header>
+<main>
+<section class="panel left">
+<h2>1. ID Card सेटअप</h2>
+<div class="field"><label for="mode">काम चुनें</label><select id="mode"><option value="id">ID Card (85.6 × 54 mm)</option><option value="a4">A4 Document</option><option value="pvc">PVC Card Layout</option></select></div>
+<div class="sidegrid">
+<div class="sidebox"><h3>Front Side</h3><input id="front" type="file" accept="image/*"><div class="preview" id="frontPreview">Front फोटो चुनें</div></div>
+<div class="sidebox"><h3>Back Side</h3><input id="back" type="file" accept="image/*"><div class="preview" id="backPreview">Back फोटो चुनें</div></div>
+</div>
+<div class="field"><label for="copies">Copies / सेट</label><input id="copies" type="number" min="1" max="20" value="1"></div>
+<div class="field"><label>Image सुधार</label><div class="range-row"><div><span class="muted">Brightness</span><input id="brightness" type="range" min="50" max="160" value="100"></div><div><span class="muted">Contrast</span><input id="contrast" type="range" min="50" max="180" value="100"></div></div></div>
+<div class="buttons"><button id="rotateF" class="secondary">Front घुमाएँ ↻</button><button id="rotateB" class="secondary">Back घुमाएँ ↻</button><button id="reset" class="light">Reset</button></div>
+<div class="notice">गोपनीयता: इस डेमो में फोटो आपके ब्राउज़र में ही रहती हैं। Aadhaar जैसी संवेदनशील फोटो किसी अनजान वेबसाइट पर अपलोड करने से बचें।</div>
+<div class="status" id="status">दोनों तरफ की फोटो चुनें।</div>
+</section>
+<section class="panel">
+<div class="toolbar"><h2>2. A4 Print Preview</h2><p class="muted">A4 पेपर · 100% / Actual Size पर प्रिंट करें। मोबाइल preview केवल देखने के लिए है।</p><div class="buttons"><button id="add">+ एक और सेट</button><button id="download" class="secondary">Download PDF</button><button id="print">Print / Save PDF</button></div></div>
+<div class="paper-wrap"><div class="paper" id="paper"><div class="paper-inner" id="paperInner"></div></div></div>
+<div class="status">प्रिंट सेटिंग: Paper = A4, Scale = 100% / Actual Size, Headers & Footers = Off.</div>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let imgs={front:null,back:null}, rotations={front:0,back:0}, extras=[];
+function loadSide(side,file){if(!file)return;let url=URL.createObjectURL(file),img=new Image();img.onload=()=>{imgs[side]={url,img};showPreview(side);render();$('status').textContent=side==='front'?'Front फोटो लोड हो गई।':'Back फोटो लोड हो गई।';};img.src=url;}
+function showPreview(side){let p=$(side+'Preview');p.innerHTML='';if(!imgs[side]){p.textContent=side+' फोटो चुनें';return}let im=document.createElement('img');im.src=imgs[side].url;im.style.filter=`brightness(${$('brightness').value}%) contrast(${$('contrast').value}%)`;im.style.transform=`rotate(${rotations[side]}deg)`;p.appendChild(im);}
+$('front').addEventListener('change',e=>loadSide('front',e.target.files[0]));$('back').addEventListener('change',e=>loadSide('back',e.target.files[0]));
+function card(src,side){let d=document.createElement('div');d.className='card';if(src){let im=document.createElement('img');im.src=src;im.style.filter=`brightness(${$('brightness').value}%) contrast(${$('contrast').value}%)`;im.style.transform=`rotate(${rotations[side]}deg)`;d.appendChild(im)}else{let e=document.createElement('div');e.className='empty';e.textContent=side==='front'?'Front side':'Back side';d.appendChild(e)}return d}
+function render(){let inner=$('paperInner');inner.innerHTML='';let mode=$('mode').value;let n=Math.max(1,Math.min(20,Number($('copies').value)||1));if(mode==='a4'){inner.style.gridTemplateColumns='1fr';inner.style.gridAutoRows='min-content';let c=document.createElement('div');c.className='card';c.style.width='100%';c.style.height='auto';c.style.aspectRatio='210/297';let im=imgs.front&&document.createElement('img');if(im){im.src=imgs.front.url;im.style.objectFit='contain';im.style.filter=`brightness(${$('brightness').value}%) contrast(${$('contrast').value}%)`;c.appendChild(im)}else c.textContent='Front में A4 डॉक्यूमेंट चुनें';inner.appendChild(c);return}else{inner.style.gridTemplateColumns='1fr 1fr';inner.style.gridAutoRows='min-content'}for(let i=0;i<n;i++){inner.appendChild(card(imgs.front?.url,'front'));inner.appendChild(card(imgs.back?.url,'back'))}}
+$('brightness').oninput=()=>{showPreview('front');showPreview('back');render()};$('contrast').oninput=()=>{showPreview('front');showPreview('back');render()};$('copies').onchange=render;$('mode').onchange=render;
+$('rotateF').onclick=()=>{rotations.front=(rotations.front+90)%360;showPreview('front');render()};$('rotateB').onclick=()=>{rotations.back=(rotations.back+90)%360;showPreview('back');render()};
+$('reset').onclick=()=>{imgs={front:null,back:null};rotations={front:0,back:0};$('front').value='';$('back').value='';showPreview('front');showPreview('back');render();$('status').textContent='रीसेट हो गया।'};
+$('add').onclick=()=>{if(!imgs.front&&!imgs.back){$('status').textContent='पहले Front या Back फोटो चुनें।';return}extras.push({front:imgs.front?.url,back:imgs.back?.url});$('status').textContent='सेट जोड़ा गया। इस डेमो में preview के लिए copies बदलें या Print करें।'};
+$('print').onclick=()=>window.print();
+$('download').onclick=()=>{ $('status').textContent='PDF बनाने के लिए Print दबाएँ और प्रिंट डायलॉग में “Save as PDF” चुनें।';window.print()};
+render();
+</script>
+</body></html>
